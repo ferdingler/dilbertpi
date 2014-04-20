@@ -39,7 +39,14 @@ responseGuid = urllib2.urlopen(req)
 # ASKING FOR INTERVAL & ENDPOINT
 #=============================
 interval = float(raw_input("\033[94mHow frequent (in seconds) do you want Dilbert to sense?:\033[0m "))
-endpointUrl = raw_input("\033[94mType endpoint URL where Dilbert should POST the data:\033[0m ")
+print "\033[92mPlease select an output format\033[0m"
+print "1) POST to an Endpoint"
+print "2) Print in console"
+print "3) Save locally into Json file"
+outputFormat = int(raw_input("\033[92mChoose your option: \033[0m "))
+
+if outputFormat == 1:
+	endpointUrl = raw_input("\033[94mType endpoint URL where Dilbert should POST the data:\033[0m ")
 
 #=============================
 # WHILE LOOP
@@ -59,17 +66,21 @@ while True:
 	else:
 		print "\033[93m"
 	print fakeData
-	print "\033[0m"
 
 	# POSTING THE FAKE DATA TO THE USER-DEFINED ENDPOINT
-	endpointRequest = urllib2.Request(endpointUrl, fakeData, { 'Content-type' : 'application/json' })
+	if outputFormat == 1:
 
-	try: 
-		urllib2.urlopen(endpointRequest)
-	except urllib2.HTTPError, e:
-		print "HTTPError = " + str(e.code)
-	except urllib2.URLError, e:
-	    print "URLError = " + str(e.reason)
+		endpointRequest = urllib2.Request(endpointUrl, fakeData, { 'Content-type' : 'application/json' })
+		print "Sending POST to " + endpointUrl
 
-	sleep(interval)
-	count = count + 1
+		try: 
+			urllib2.urlopen(endpointRequest)
+		except urllib2.HTTPError, e:
+			print "HTTPError = " + str(e.code)
+		except urllib2.URLError, e:
+		    print "URLError = " + str(e.reason)
+
+		sleep(interval)
+		count = count + 1
+
+	print "\033[0m"
