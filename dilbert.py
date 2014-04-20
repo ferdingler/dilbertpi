@@ -3,7 +3,8 @@ import urllib
 import json
 from time import sleep
 
-dilberthost = 'http://localhost:1337/'
+dilberthost = 'http://geekster.io:8080/'
+#dilberthost = 'http://localhost:1337/'
 
 print "\033[94mWhat type of sensor would you like to mock?\033[0m"
 print "1) iBeacon (Presence)"
@@ -61,7 +62,6 @@ while True:
 	print "\033[0m"
 
 	# POSTING THE FAKE DATA TO THE USER-DEFINED ENDPOINT
-	#data = urllib.urlencode(fakeData)
 	endpointRequest = urllib2.Request(endpointUrl, fakeData, { 'Content-type' : 'application/json' })
 
 	try: 
