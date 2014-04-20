@@ -1,6 +1,6 @@
 import urllib2
 import urllib
-import sqlite3
+import json
 from time import sleep
 
 dilberthost = 'http://localhost:1337/'
@@ -42,26 +42,36 @@ interval = float(raw_input("\033[94mHow frequent (in seconds) do you want me to 
 #=============================
 # ASKING FOR ENDPOINT
 #=============================
-endpointUrl = raw_input("\033[94mPlease type endpoint URL where Dilbert should POST the data:\033[0m ")
+endpointUrl = raw_input("\033[94mType endpoint URL where Dilbert should POST the data:\033[0m ")
 
 #=============================
 # WHILE LOOP
 #=============================
 dilbertEndpointUrl = dilberthost + responseGuid.read().replace('"', "")
-req = urllib2.Request(dilbertEndpointUrl)
-req2 = urllib2.Request(endpointUrl)
+dilbertRequest = urllib2.Request(dilbertEndpointUrl)
+count = 1
 while True:
-	fakeData = urllib2.urlopen(req)
-	print fakeData.read()
+	
+	# GETTING FAKE DATA FROM DILBERT
+	fakeDataResponse = urllib2.urlopen(dilbertRequest)
+	fakeData = fakeDataResponse.read()
+	fakeDataJson = json.loads(fakeData)
+
+	# POSTING THE FAKE DATA TO THE USER-DEFINED ENDPOINT
+	data = urllib.urlencode(fakeDataJson)
+	headers = { 'Content-type' : 'application/json' }
+	endpointRequest = urllib2.Request(endpointUrl, data, headers)
+	urllib2.urlopen(endpointRequest)
+	
+	# data = urllib.urlencode(fakeDataJson)
+	# headers = { 'Content-type' : 'application/json' }
+	# endpointRequest = urllib2.Request(endpointUrl, data, headers)
+	# try: 
+	# 	urllib2.urlopen(endpointRequest)
+	# except urllib2.HTTPError, e:
+	# 	print "HTTPError = " + str(e.code)
+	# except urllib2.URLError, e:
+	#     print "URLError = " + str(e.reason)
+
 	sleep(interval)
-
-#=============================
-# STORING INTO LOCAL DB
-#=============================
-# conn = sqlite3.connect('mocks.db')
-# c = conn.cursor()
-
-# c.execute("INSERT INTO sensors VALUES (" + serviceType + ", 5)")
-
-# conn.commit()
-# conn.close()
+	count = count + 1
